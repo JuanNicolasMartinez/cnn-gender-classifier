@@ -1,0 +1,9 @@
+# El modelo se descarga por separado (HF Hub u otro storage)
+# El directorio se preserva con models/.gitkeep
+models/*.keras
+models/*.h5
+models/*.pkl
+models/*.joblib
+models/*.pt
+models/*.pth
+models/*.onnx

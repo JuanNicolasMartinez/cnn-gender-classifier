@@ -1,0 +1,9 @@
+numpy
+pandas
+matplotlib
+tensorflow
+scikit-learn
+pillow
+plotly
+kagglehub
+opencv-python-headless
