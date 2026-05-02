@@ -5,7 +5,10 @@ WORKDIR /app
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-RUN useradd -m -u 1000 user
+RUN useradd -m -u 1000 user && \
+    mkdir -p /app/models && \
+    chown -R user:user /app
+
 USER user
 ENV PATH="/home/user/.local/bin:$PATH"
 

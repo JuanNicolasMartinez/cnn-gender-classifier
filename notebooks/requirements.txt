@@ -7,3 +7,6 @@ pillow
 plotly
 kagglehub
 opencv-python-headless
+ipykernel
+nbformat
+nbconvert
