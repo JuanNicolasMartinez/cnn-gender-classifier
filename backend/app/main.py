@@ -9,6 +9,7 @@ from app.preprocessing import (
     pil_to_numpy_rgb,
 )
 from app.inference import predict_binary_class
+from app.schemas import ModelMetadataResponse
 from app.xai import generate_gradcam, generate_saliency_map
 
 
@@ -29,6 +30,12 @@ app.add_middleware(
 
 
 model = load_model()
+ACCEPTED_IMAGE_TYPES = (
+    "image/jpeg",
+    "image/png",
+    "image/jpg",
+    "image/webp",
+)
 
 
 @app.get("/")
@@ -48,6 +55,26 @@ def health():
     }
 
 
+@app.get("/model-metadata", response_model=ModelMetadataResponse)
+def model_metadata():
+    return {
+        "model_name": model.name,
+        "input_size": {
+            "width": settings.image_width,
+            "height": settings.image_height,
+            "channels": 3,
+        },
+        "classes": {
+            "positive": settings.positive_class,
+            "negative": settings.negative_class,
+        },
+        "threshold": settings.threshold,
+        "accepted_mime_types": list(ACCEPTED_IMAGE_TYPES),
+        "supports_xai": True,
+        "xai_outputs": ["gradcam", "saliency"],
+    }
+
+
 @app.post("/predict")
 async def predict(
     file: UploadFile = File(...),
@@ -58,7 +85,7 @@ async def predict(
     and optionally returns Grad-CAM and Saliency Map visualizations.
     """
 
-    if file.content_type not in ["image/jpeg", "image/png", "image/jpg", "image/webp"]:
+    if file.content_type not in ACCEPTED_IMAGE_TYPES:
         raise HTTPException(
             status_code=400,
             detail="Invalid file type. Please upload a JPG, PNG or WEBP image.",
