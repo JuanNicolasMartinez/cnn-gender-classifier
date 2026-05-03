@@ -95,12 +95,21 @@ export function useCameraCapture() {
     }
 
     const video = videoRef.current;
-    const width = video.videoWidth || 224;
-    const height = video.videoHeight || 224;
+    const vw = video.videoWidth || 224;
+    const vh = video.videoHeight || 224;
 
+    // The silhouette oval is rendered at 88% of the container height.
+    // Its SVG viewBox is 200×240, so width = height * (200/240).
+    // We compute the oval's bounding box in video-pixel space and crop to it.
+    const ovalH = vh * 0.88;
+    const ovalW = ovalH * (200 / 240);
+    const sx = (vw - ovalW) / 2;
+    const sy = (vh - ovalH) / 2;
+
+    const OUTPUT = 224;
     const canvas = document.createElement("canvas");
-    canvas.width = width;
-    canvas.height = height;
+    canvas.width = OUTPUT;
+    canvas.height = OUTPUT;
 
     const context = canvas.getContext("2d");
 
@@ -113,7 +122,8 @@ export function useCameraCapture() {
       return null;
     }
 
-    context.drawImage(video, 0, 0, width, height);
+    // Crop the oval bounding box and scale to 224×224.
+    context.drawImage(video, sx, sy, ovalW, ovalH, 0, 0, OUTPUT, OUTPUT);
 
     const blob = await new Promise<Blob | null>((resolve) => {
       canvas.toBlob(resolve, "image/png", 0.95);

@@ -245,7 +245,7 @@ export const notebookTimelineDetails: Record<string, TimelineNodeDetail> = {
   },
   architecture: {
     summary:
-      "Se construye `build_cnn` con tres bloques Conv+BN+Pool+SpatialDropout y una cabeza densa regularizada.",
+      "Se construye `build_cnn` con tres bloques Conv+BN+Pool+SpatialDropout y una cabeza densa regularizada; luego la corrida principal instancia filtros 48/96/192 con `augment=False`.",
     detail:
       "Es uno de los bloques más densos del notebook porque fija arquitectura, regularización, forma de entrada y número real de parámetros del modelo entrenado ahí.",
     stats: [
@@ -259,9 +259,10 @@ export const notebookTimelineDetails: Record<string, TimelineNodeDetail> = {
         title: "Bloques principales",
         items: [
           "Entrada `224x224x3` con opción de augmentation embebida en la función constructora.",
-          "Bloque 1: Conv2D(32) + BatchNorm + MaxPool + SpatialDropout2D(0.10).",
-          "Bloque 2: Conv2D(64) + BatchNorm + MaxPool + SpatialDropout2D(0.15).",
-          "Bloque 3: Conv2D(128) + BatchNorm + MaxPool + SpatialDropout2D(0.20).",
+          "La corrida principal del notebook usa `filters=(48, 96, 192)` y `augment=False` al instanciar el modelo.",
+          "Bloque 1: Conv2D(48) + BatchNorm + MaxPool + SpatialDropout2D(0.10).",
+          "Bloque 2: Conv2D(96) + BatchNorm + MaxPool + SpatialDropout2D(0.15).",
+          "Bloque 3: Conv2D(192) + BatchNorm + MaxPool + SpatialDropout2D(0.20).",
           "Cabeza: `GlobalAveragePooling2D -> Dense(128) -> Dropout(0.50) -> Dense(1, sigmoid)`.",
         ],
       },
@@ -278,7 +279,8 @@ export const notebookTimelineDetails: Record<string, TimelineNodeDetail> = {
         title: "Decisiones de diseño",
         items: [
           "No hay transfer learning: la CNN se construye completamente desde cero.",
-          "Se usa regularización L2, BatchNormalization y SpatialDropout2D para contener overfitting.",
+          "La función `build_cnn` admite augmentation con `RandomFlip`, `RandomRotation(0.08)` y `RandomZoom(0.10)`.",
+          "Se usa regularización L2 = 1e-4, BatchNormalization y SpatialDropout2D para contener overfitting.",
           "Este modal ahora absorbe la ficha de arquitectura que antes vivía aparte en el dashboard.",
         ],
       },
@@ -402,7 +404,7 @@ export const notebookTimelineDetails: Record<string, TimelineNodeDetail> = {
       {
         title: "Exp-A | base",
         items: [
-          "Filtros (32, 64, 128), kernel 3, dropout 0.50, lr 0.0010.",
+          "Filtros (32, 64, 128), kernel 3, dense 128, dropout 0.50, lr 0.0010.",
           "Val acc 0.7774, Test acc 0.7934, Test AUC 0.8719, Test loss 0.4655.",
           "Parámetros: 110,785.",
         ],
@@ -410,7 +412,7 @@ export const notebookTimelineDetails: Record<string, TimelineNodeDetail> = {
       {
         title: "Exp-B | wider",
         items: [
-          "Filtros (48, 96, 192), kernel 3, dropout 0.40, lr 0.0010.",
+          "Filtros (48, 96, 192), kernel 3, dense 192, dropout 0.40, lr 0.0010.",
           "Val acc 0.7847, Test acc 0.7872, Test AUC 0.8620, Test loss 0.4753.",
           "Parámetros: 247,585.",
         ],
@@ -418,7 +420,7 @@ export const notebookTimelineDetails: Record<string, TimelineNodeDetail> = {
       {
         title: "Exp-C | k5+lr↓",
         items: [
-          "Filtros (32, 64, 128), kernel 5, dropout 0.50, lr 0.0005.",
+          "Filtros (32, 64, 128), kernel 5, dense 128, dropout 0.50, lr 0.0005.",
           "Val acc 0.8278, Test acc 0.8290, Test AUC 0.8904, Test loss 0.4350.",
           "Parámetros: 276,161.",
           "El notebook lo presenta como mejor configuración bajo el criterio de accuracy en test y brecha train-val.",
@@ -429,6 +431,7 @@ export const notebookTimelineDetails: Record<string, TimelineNodeDetail> = {
         items: [
           "Cada experimento limpia la sesión con `keras.backend.clear_session()` para aislar pesos y grafo.",
           "Los callbacks del sweep son más cortos (`patience=5` y `patience=3`) para comparar de forma justa.",
+          "Todos los experimentos se entrenan con `EPOCHS_HP = 18` y el mismo `BATCH = 32`.",
           "Este modal absorbe la comparativa de tuning que antes aparecía resumida en tarjetas externas.",
         ],
       },
@@ -458,6 +461,7 @@ export const notebookTimelineDetails: Record<string, TimelineNodeDetail> = {
         title: "Barrido de thresholds",
         items: [
           "El sweep recorre thresholds desde 0.20 hasta 0.79 en pasos de 0.01.",
+          "Eso implica 60 thresholds candidatos evaluados sobre el mismo vector `y_proba`.",
           "F1 con threshold 0.50: 0.8543.",
           "F1 máximo encontrado: 0.8581 en threshold 0.55.",
           "El propio notebook sugiere configurar `THRESHOLD=0.55` en backend y en el Space.",
@@ -476,6 +480,7 @@ export const notebookTimelineDetails: Record<string, TimelineNodeDetail> = {
         title: "Artefactos de evaluación",
         items: [
           "Matriz de confusión, curva ROC, curva Precision-Recall e histograma de probabilidades por clase.",
+          "El histograma usa `nbinsx = 30` y superpone distribuciones de `P(Male)` para clases reales male y female.",
           "Las vistas de AUC y distribución que antes estaban afuera del timeline ahora quedan ligadas a este evento de evaluación.",
         ],
       },
@@ -500,6 +505,7 @@ export const notebookTimelineDetails: Record<string, TimelineNodeDetail> = {
           "Saliency vanilla y SmoothGrad con `GradientTape` sobre la imagen de entrada.",
           "Grad-CAM clásico usando gradientes respecto a la última capa convolucional.",
           "Overlays con OpenCV sobre la imagen original normalizada en [0,1].",
+          "En `xai_panel`, SmoothGrad usa alpha 0.55 con `COLORMAP_INFERNO` y Grad-CAM alpha 0.50 con `COLORMAP_JET`.",
         ],
       },
       {
@@ -528,6 +534,7 @@ export const notebookTimelineDetails: Record<string, TimelineNodeDetail> = {
         title: "Caso male",
         items: [
           "Se elige un ejemplo correctamente clasificado con idx 627.",
+          "La selección sale del 3er ejemplo correcto más confiable, no del máximo absoluto.",
           "La probabilidad reportada para la clase positiva es P(Male)=0.9984.",
           "Se visualiza un panel 1x4 con original, saliency, heatmap Grad-CAM y overlay.",
         ],
@@ -536,6 +543,7 @@ export const notebookTimelineDetails: Record<string, TimelineNodeDetail> = {
         title: "Caso female",
         items: [
           "Se elige un ejemplo correctamente clasificado con idx 448.",
+          "También proviene del 3er ejemplo correcto más confiable para esa clase.",
           "La probabilidad reportada para la clase positiva es P(Male)=0.0000.",
           "También se renderiza su panel 1x4 con ambos métodos de explicación.",
         ],
@@ -582,7 +590,8 @@ export const notebookTimelineDetails: Record<string, TimelineNodeDetail> = {
         title: "Cruce con la app",
         items: [
           "La app productiva venía mostrando input 224x224x3, bloques 48/96/192, Dense 128 y 704,165 parámetros totales.",
-          "El notebook que lees aquí documenta otra fotografía: arquitectura base 32/64/128 y 235,169 parámetros totales en la corrida mostrada.",
+          "El notebook que lees aquí muestra una corrida principal con bloques 48/96/192 y 235,169 parámetros totales.",
+          "La misma función `build_cnn` permite otras configuraciones y por eso el sweep reabre variantes 32/64/128 y kernels distintos.",
           "El backend hoy usa threshold 0.65, aunque el barrido del notebook recomienda 0.55 para maximizar F1.",
           "Por eso las métricas del dashboard dejaron de estar flotando afuera: ahora viven dentro del evento que explica su origen y su posible contradicción.",
         ],

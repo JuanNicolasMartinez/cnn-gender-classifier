@@ -26,7 +26,7 @@ export function WorkspaceShell({ children }: WorkspaceShellProps) {
                   CNN Gender Classifier
                 </h1>
                 <p className="mt-1 max-w-2xl text-sm leading-6 text-secondary md:text-base">
-                  Dashboard para métricas, pipeline e inferencia con XAI.
+                  Pipeline del notebook e inferencia productiva con XAI.
                 </p>
               </div>
             </div>

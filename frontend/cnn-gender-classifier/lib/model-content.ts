@@ -10,15 +10,9 @@ import type {
 
 export const navigationItems: NavigationItem[] = [
   {
-    href: "/dashboard",
-    label: "Dashboard",
-    eyebrow: "Métricas y prod",
-    icon: "dashboard",
-  },
-  {
     href: "/pipeline",
     label: "Pipeline",
-    eyebrow: "Preproceso y CNN",
+    eyebrow: "Notebook y CNN",
     icon: "pipeline",
   },
   {
@@ -158,9 +152,9 @@ export const pipelineTimelineNodes: TimelineNode[] = [
     id: "environment",
     label: "Configuración del entorno",
     shortLabel: "Setup",
-    summary: "Se cargan TensorFlow, NumPy, Plotly, OpenCV y se fija `SEED = 42` para reproducibilidad.",
+    summary: "",
     detail:
-      "El notebook arranca preparando librerías, warnings, rutas y semillas para que entrenamiento, split y visualizaciones sean reproducibles.",
+      "",
     badgeCount: 4,
     tone: "default",
     icon: "runtime",

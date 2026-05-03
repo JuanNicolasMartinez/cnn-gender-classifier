@@ -1,5 +1,5 @@
-import { NotebookDashboardBoard } from "@/components/notebook-dashboard-board";
+import { redirect } from "next/navigation";
 
 export default function DashboardPage() {
-  return <NotebookDashboardBoard />;
+  redirect("/pipeline");
 }
