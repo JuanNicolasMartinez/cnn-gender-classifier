@@ -11,6 +11,7 @@ type TimelineNodeProps = {
   isSelected: boolean;
   isDimmed: boolean;
   onSelect: (nodeId: string) => void;
+  orientation?: "horizontal" | "vertical";
 };
 
 const nodeToneClasses = {
@@ -61,8 +62,43 @@ export function TimelineNode({
   isSelected,
   isDimmed,
   onSelect,
+  orientation = "horizontal",
 }: TimelineNodeProps) {
   const size = sizeClasses[node.size];
+
+  if (orientation === "vertical") {
+    return (
+      <div
+        className={cn(
+          "relative flex w-full gap-3 transition-[opacity,filter] duration-200",
+          isSelected && "z-[70]",
+          isDimmed && "opacity-25 blur-[1.4px]",
+        )}
+      >
+        <div className="relative flex w-8 shrink-0 flex-col items-center">
+          {!isFirst ? (
+            <span className="absolute left-1/2 top-0 h-3 w-px -translate-x-1/2 bg-[var(--color-surface-muted)]" />
+          ) : null}
+          <span
+            className={cn(
+              "mt-3 h-4 w-4 rounded-full border border-[var(--color-background)]",
+              markerToneClasses[node.tone],
+            )}
+          />
+          {!isLast ? (
+            <span className="mt-1 w-px flex-1 bg-[var(--color-surface-muted)]" />
+          ) : null}
+        </div>
+        <div className="flex-1 pb-2">
+          <NodeButtonVertical
+            node={node}
+            isSelected={isSelected}
+            onSelect={onSelect}
+          />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div
@@ -184,6 +220,59 @@ function NodeButton({
             size.title,
           )}
         >
+          {node.label}
+        </h3>
+        <p className="mt-3 text-sm leading-6 text-secondary">{node.summary}</p>
+      </div>
+    </button>
+  );
+}
+
+function NodeButtonVertical({
+  node,
+  isSelected,
+  onSelect,
+}: {
+  node: TimelineNodeData;
+  isSelected: boolean;
+  onSelect: (nodeId: string) => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={() => onSelect(node.id)}
+      className={cn(
+        "timeline-node-button relative w-full rounded-[28px] border p-4 text-left transition-[opacity,border-color] duration-200",
+        nodeToneClasses[node.tone],
+        isSelected && "border-[var(--color-text-primary)]",
+      )}
+    >
+      {node.badgeCount ? (
+        <AccentBadge className="absolute right-4 top-4 z-20">
+          {node.badgeCount}
+        </AccentBadge>
+      ) : null}
+
+      <div className="flex items-start justify-between gap-3">
+        <span
+          className={cn(
+            "inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border",
+            iconToneClasses[node.tone],
+          )}
+        >
+          <TimelineEventIcon icon={node.icon} className="h-5 w-5" />
+        </span>
+
+        <span className="glass-pill px-3 py-1.5 text-[0.62rem] uppercase tracking-[0.22em] text-secondary">
+          {node.complexity}
+        </span>
+      </div>
+
+      <div className="mt-4 pr-2">
+        <p className="text-[0.64rem] uppercase tracking-[0.24em] text-secondary">
+          {node.shortLabel}
+        </p>
+        <h3 className="mt-2 text-base font-semibold leading-tight tracking-[-0.04em] text-primary">
           {node.label}
         </h3>
         <p className="mt-3 text-sm leading-6 text-secondary">{node.summary}</p>

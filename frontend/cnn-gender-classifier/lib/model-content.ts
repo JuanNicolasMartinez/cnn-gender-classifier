@@ -10,16 +10,16 @@ import type {
 
 export const navigationItems: NavigationItem[] = [
   {
-    href: "/pipeline",
-    label: "Pipeline",
-    eyebrow: "Notebook y CNN",
-    icon: "pipeline",
-  },
-  {
     href: "/model",
     label: "Model",
     eyebrow: "Inferencia y XAI",
     icon: "model",
+  },
+  {
+    href: "/pipeline",
+    label: "Pipeline",
+    eyebrow: "Notebook y CNN",
+    icon: "pipeline",
   },
 ];
 

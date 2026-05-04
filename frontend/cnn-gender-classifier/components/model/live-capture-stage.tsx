@@ -116,9 +116,12 @@ export function LiveCaptureStage({
         {mounted && !previewUrl && !cameraActive ? (
           <div className="pointer-events-none absolute inset-x-0 top-1/2 flex -translate-y-1/2 justify-center px-4 sm:inset-0 sm:grid sm:place-items-center sm:translate-y-0">
             <div className="rounded-[var(--radius-md)] border border-[rgba(247,247,240,0.4)] bg-[rgba(20,24,23,0.55)] px-4 py-2.5 text-center text-xs leading-5 text-(--color-white-warm) backdrop-blur-md sm:px-5 sm:py-3 sm:text-sm sm:leading-6">
-              {cameraSupported
-                ? "La cámara está inactiva. Inícíala abajo."
-                : "El navegador actual no soporta getUserMedia."}
+              {cameraSupported ? (
+                <>
+                  <span className="sm:hidden">La cámara está inactiva. Inícíala abajo.</span>
+                  <span className="hidden sm:inline">La cámara está inactiva. Inícíala a la izquierda.</span>
+                </>
+              ) : "El navegador actual no soporta getUserMedia."}
             </div>
           </div>
         ) : null}

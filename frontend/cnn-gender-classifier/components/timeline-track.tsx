@@ -57,7 +57,24 @@ export function TimelineTrack({ nodes }: TimelineTrackProps) {
   return (
     <>
       <section className="clinical-card overflow-visible p-5 md:p-6">
-        <div className="timeline-scroll overflow-x-auto pb-2">
+        {/* Mobile: vertical stack */}
+        <div className="flex flex-col gap-4 sm:hidden">
+          {nodes.map((node, index) => (
+            <TimelineNode
+              key={node.id}
+              node={node}
+              isFirst={index === 0}
+              isLast={index === nodes.length - 1}
+              isSelected={selectedNodeId === node.id}
+              isDimmed={selectedNodeId !== null && selectedNodeId !== node.id}
+              onSelect={setSelectedNodeId}
+              orientation="vertical"
+            />
+          ))}
+        </div>
+
+        {/* Tablet/desktop: horizontal track */}
+        <div className="timeline-scroll hidden overflow-x-auto pb-2 sm:block">
           <div
             className="relative min-w-full px-3 pb-6 pt-8"
             style={timelineLayoutStyles}
@@ -72,6 +89,7 @@ export function TimelineTrack({ nodes }: TimelineTrackProps) {
                   isSelected={selectedNodeId === node.id}
                   isDimmed={selectedNodeId !== null && selectedNodeId !== node.id}
                   onSelect={setSelectedNodeId}
+                  orientation="horizontal"
                 />
               ))}
             </div>
