@@ -15,12 +15,10 @@ export function WorkspaceShell({ children }: WorkspaceShellProps) {
         <div className="tablet-surface flex min-h-full flex-1 flex-col overflow-hidden rounded-[42px] bg-surface">
           <header className="flex flex-col gap-4 px-4 pb-3 pt-4 md:px-5 md:pb-4 md:pt-5 xl:flex-row xl:items-center xl:justify-between">
             <div className="flex min-w-0 items-center gap-4">
-              <div className="grid h-14 w-14 shrink-0 place-items-center rounded-full border border-[var(--color-surface-muted)] bg-surface-light text-[1.55rem] font-semibold tracking-[-0.06em] text-primary">
-                Dr+
-              </div>
+              
               <div className="min-w-0">
                 <p className="text-[0.68rem] uppercase tracking-[0.28em] text-secondary">
-                  Clinical ML tablet
+                  Juan Nicolás Martínez Vera
                 </p>
                 <h1 className="truncate text-[1.8rem] font-semibold tracking-[-0.07em] text-primary md:text-[2.15rem]">
                   CNN Gender Classifier
